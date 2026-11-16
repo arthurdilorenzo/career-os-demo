@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Career OS — Painel Interativo de Processos Seletivos</title>
+    <meta name="description" content="Painel open-source em HTML, CSS e JS puro com Kanban drag-and-drop, agenda de prazos, busca rápida (⌘K) e gráficos em SVG nativo — zero build e dados fictícios." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://arthurdilorenzo.github.io/career-os-demo/" />
+    <meta property="og:title" content="Career OS — Painel Interativo de Processos Seletivos" />
+    <meta property="og:description" content="Demo interativa open-source em HTML, CSS e JS puro: Kanban drag-and-drop, agenda de follow-ups, busca ⌘K e gráficos SVG nativos." />
+    <meta property="og:image" content="https://arthurdilorenzo.github.io/career-os-demo/assets/og-preview.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Career OS — Painel Interativo de Processos Seletivos" />
+    <meta name="twitter:description" content="Demo interativa open-source em HTML, CSS e JS puro com Kanban, agenda e gráficos SVG nativos." />
+    <meta name="twitter:image" content="https://arthurdilorenzo.github.io/career-os-demo/assets/og-preview.png" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon_jd.svg" />
+    <link rel="icon" type="image/png" href="assets/favicon_jd.png" />
+    <link rel="apple-touch-icon" href="assets/favicon_jd.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=3.5" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+
+    <div class="app">
+      <!-- ============ SIDEBAR ============ -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sb-brand">
+          <span class="sb-mark">JD</span>
+          <span class="sb-brand-text">John Doe<small>Career OS · Demo</small></span>
+        </div>
+
+        <nav class="sb-nav" aria-label="Navegação principal">
+          <button class="sb-item active" data-view="overview"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3zm0 8h8v-6H3zm10 0h8V11h-8zm0-18v6h8V3z"/></svg><span>Visão Geral</span></button>
+          <button class="sb-item" data-view="agenda"><svg viewBox="0 0 24 24"><path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2zm-2 8h14v10H5z"/></svg><span>Agenda</span><em class="sb-count alert" id="sbCountAgenda">0</em></button>
+          <button class="sb-item" data-view="analytics"><svg viewBox="0 0 24 24"><path d="M4 20V10h3v10zm6 0V4h3v16zm6 0v-7h3v7z"/></svg><span>Análises</span></button>
+          <button class="sb-item" data-view="kanban"><svg viewBox="0 0 24 24"><path d="M4 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm6 0h4a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm6 0h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg><span>Kanban</span><em class="sb-count" id="sbCountKanban">0</em></button>
+          <button class="sb-item" data-view="table"><svg viewBox="0 0 24 24"><path d="M3 4h18v4H3zm0 6h18v4H3zm0 6h18v4H3z"/></svg><span>Tabela</span></button>
+        </nav>
+
+        <div class="sb-section-label">Etapas</div>
+        <ul class="sb-legend" id="sbLegend"></ul>
+
+        <div class="sb-footer">
+          <button class="sb-action primary" id="addJobBtn"><span>＋</span><b>Nova vaga</b></button>
+          <button class="sb-action" id="exportChangesBtn"><span>⇩</span><b>Alterações</b><em id="localChangesBadge" class="sb-count" hidden>0</em></button>
+          <button class="sb-action" id="privacyModeBtn" aria-pressed="false"><span id="privacyIcon">◉</span><b id="privacyLabel">Privacidade off</b></button>
+          <div class="sb-links">
+            <a href="https://arthurdilorenzo.com" target="_blank" rel="noreferrer">Portfólio ↗</a>
+            <a href="kanban_blurred.html">Modo blur</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ============ MAIN ============ -->
+      <main class="main">
+        <header class="topbar">
+          <div class="tb-title">
+            <p class="eyebrow" id="viewEyebrow">COMMAND CENTER</p>
+            <h1 id="viewTitle">Visão Geral</h1>
+          </div>
+          <div class="tb-search">
+            <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 0 1 6.32 12.9l5.39 5.4-1.41 1.4-5.4-5.39A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg>
+            <input id="searchInput" type="search" placeholder="Buscar empresa, cargo, tag, nota…" aria-label="Buscar vagas" />
+            <kbd>⌘K</kbd>
+          </div>
+          <div class="tb-targets">
+            <div class="tb-target"><span>USD</span><strong class="sensitive">US$ 5k+</strong></div>
+            <div class="tb-target"><span>BRL</span><strong class="sensitive">R$ 15k+</strong></div>
+          </div>
+        </header>
+
+        <div id="privacyNotice" class="privacy-banner" hidden>🔒 Modo privacidade ativo — remunerações borradas. <button id="turnOffPrivacyBtn" type="button">Desativar</button></div>
+
+        <!-- ===== VIEW: OVERVIEW ===== -->
+        <section class="view" id="view-overview">
+          <div class="kpi-row" id="kpiRow"></div>
+
+          <div class="ov-grid">
+            <div class="panel">
+              <div class="panel-head"><h2>Prazos & próximas ações</h2><button class="link-btn" data-goto="agenda">Ver agenda →</button></div>
+              <div id="ovAgenda" class="ov-agenda"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h2>Processos em andamento</h2><span class="panel-sub" id="ovActiveCount"></span></div>
+              <div id="ovActive" class="ov-active"></div>
+            </div>
+          </div>
+
+          <div class="ov-grid charts">
+            <div class="panel">
+              <div class="panel-head"><h2>Funil por etapa</h2><button class="link-btn" data-goto="kanban">Abrir kanban →</button></div>
+              <div id="ovFunnel"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h2>Volume por mês</h2><span class="panel-sub">data de envio · ou de registro quando ausente</span></div>
+              <div id="ovMonthly"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== VIEW: KANBAN ===== -->
+        <section class="view" id="view-kanban" hidden>
+          <div class="toolbar">
+            <div class="seg" id="kanbanRegion">
+              <button class="active" data-region="all">Todas</button>
+              <button data-region="Internacional">USD</button>
+              <button data-region="Brasil">Brasil</button>
+            </div>
+            <label class="switch"><input type="checkbox" id="hideArchived" /> <span>Ocultar encerradas / rejeitadas</span></label>
+            <span class="toolbar-meta" id="kanbanMeta"></span>
+          </div>
+          <div class="kanban" id="kanbanBoard"></div>
+        </section>
+
+        <!-- ===== VIEW: TABLE ===== -->
+        <section class="view" id="view-table" hidden>
+          <div class="toolbar">
+            <div class="chips" id="tableStageChips"></div>
+            <div class="seg" id="tableRegion">
+              <button class="active" data-region="all">Todas</button>
+              <button data-region="Internacional">USD</button>
+              <button data-region="Brasil">Brasil</button>
+            </div>
+            <span class="toolbar-meta" id="tableMeta"></span>
+          </div>
+          <div class="panel table-panel">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-sort="company">Empresa</th>
+                  <th data-sort="role">Cargo</th>
+                  <th data-sort="stage">Etapa</th>
+                  <th data-sort="fitScore">Fit</th>
+                  <th data-sort="salary">Remuneração</th>
+                  <th data-sort="category">Região</th>
+                  <th data-sort="date">Data</th>
+                  <th data-sort="due">Prazo</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===== VIEW: ANALYTICS ===== -->
+        <section class="view" id="view-analytics" hidden>
+          <div class="an-grid">
+            <div class="panel"><div class="panel-head"><h2>Taxa de retorno real</h2></div><div id="anGauge"></div></div>
+            <div class="panel"><div class="panel-head"><h2>Moeda / região</h2></div><div id="anDonut"></div></div>
+            <div class="panel"><div class="panel-head"><h2>Distribuição de Fit Score</h2></div><div id="anFit"></div></div>
+            <div class="panel span-2"><div class="panel-head"><h2>Volume por mês, por região</h2><span class="panel-sub">data de envio · ou de registro quando ausente</span></div><div id="anMonthly"></div></div>
+            <div class="panel"><div class="panel-head"><h2>Desfecho das candidaturas</h2></div><div id="anOutcome"></div></div>
+          </div>
+          <p class="data-note" id="anNote"></p>
+        </section>
+
+        <!-- ===== VIEW: AGENDA ===== -->
+        <section class="view" id="view-agenda" hidden>
+          <div class="agenda" id="agendaList"></div>
+        </section>
+
+        <footer class="site-foot">
+          <span>Feito por <a href="https://arthurdilorenzo.com" target="_blank" rel="noreferrer"><img src="assets/author_mark.png" alt="" />Arthur Di Lorenzo</a></span>
+          <span class="site-foot-meta">Career OS · Demo interativa</span>
+        </footer>
+      </main>
+    </div>
+
+    <!-- ============ DRAWER (gaveta lateral) ============ -->
+    <div class="drawer-scrim" id="drawerScrim" hidden></div>
+    <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Detalhes da vaga">
+      <form id="drawerForm">
+        <header class="dr-head">
+          <div class="dr-id">
+            <span class="logo lg" id="drLogo"></span>
+            <div>
+              <p class="dr-company" id="drCompany">—</p>
+              <h2 id="drRole">—</h2>
+            </div>
+          </div>
+          <button type="button" class="icon-btn" id="drClose" aria-label="Fechar">✕</button>
+        </header>
+
+        <div class="dr-body">
+          <div class="dr-chips" id="drChips"></div>
+          <div class="dr-quick-actions" id="drQuickActions"></div>
+
+          <div class="dr-block">
+            <p class="dr-label">Etapa — clique para mover</p>
+            <div id="drStepper"></div>
+          </div>
+
+          <div class="dr-status" id="drStatus"></div>
+
+          <div class="dr-grid">
+            <label>Prioridade
+              <select id="drPriority"><option value="">—</option><option>Alta</option><option>Média</option><option>Baixa</option></select>
+            </label>
+            <label>Data de envio<input type="date" id="drApplied" /></label>
+            <label>Próximo prazo<input type="date" id="drDue" /></label>
+            <label>CV utilizado<input type="text" id="drResume" placeholder="JohnDoe_Empresa.pdf" /></label>
+            <label class="full">Contato / recrutador<input type="text" id="drContact" /></label>
+            <label class="full">Próxima ação<input type="text" id="drNextAction" /></label>
+            <label class="full">Notas<textarea id="drNotes" rows="7"></textarea></label>
+          </div>
+        </div>
+
+        <footer class="dr-foot">
+          <div>
+            <a id="drUrl" class="btn ghost" target="_blank" rel="noreferrer">Abrir vaga ↗</a>
+            <button type="button" class="btn ghost" id="drRestore">Restaurar original</button>
+          </div>
+          <div>
+            <button type="button" class="btn ghost" id="drCancel">Cancelar</button>
+            <button type="submit" class="btn primary">Salvar</button>
+          </div>
+        </footer>
+      </form>
+    </aside>
+
+    <!-- ============ MODAIS ============ -->
+    <dialog id="exportModal" class="modal">
+      <header><h2>Alterações locais (JSON)</h2><button type="button" class="icon-btn" data-close>✕</button></header>
+      <p class="modal-intro">Mudanças salvas localmente neste navegador (<code>localStorage</code>). Você pode copiar ou baixar em JSON.</p>
+      <textarea id="exportJson" rows="12" readonly></textarea>
+      <footer>
+        <button class="btn danger" id="clearAllLocalBtn">Limpar memória local</button>
+        <div><button class="btn ghost" id="copyJsonBtn">Copiar</button><button class="btn primary" id="downloadJsonBtn">Baixar JSON</button></div>
+      </footer>
+    </dialog>
+
+    <dialog id="newJobModal" class="modal">
+      <form id="newJobForm">
+        <header><h2>Nova vaga</h2><button type="button" class="icon-btn" data-close>✕</button></header>
+        <div class="dr-grid">
+          <label class="full">Empresa *<input id="njCompany" required /></label>
+          <label class="full">Cargo *<input id="njRole" required /></label>
+          <label>Região<select id="njCategory"><option value="Internacional">Internacional (USD)</option><option value="Brasil">Brasil (BRL)</option></select></label>
+          <label>Etapa<select id="njStage"><option value="to_apply">A aplicar</option><option value="inbound">A validar</option><option value="submitted">Enviada</option><option value="interview">Entrevista</option></select></label>
+          <label>Remuneração<input id="njSalary" placeholder="US$ 5k/mês" /></label>
+          <label>Fit (0–10)<input id="njFit" type="number" step="0.1" min="0" max="10" /></label>
+          <label class="full">URL *<input id="njUrl" type="url" required /></label>
+          <label class="full">Notas<textarea id="njNotes" rows="3"></textarea></label>
+        </div>
+        <footer><span></span><div><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn primary" type="submit">Cadastrar</button></div></footer>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script src="data.js?v=1"></script>
+    <script src="app.js?v=3.1"></script>
+  </body>
+</html>
